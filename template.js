@@ -242,7 +242,7 @@
             }
         }
         document.open();
-        document.write("<!DOCTYPE html>" + html.innerHTML);
+        document.write("<!DOCTYPE html>" + html.outerHTML);
         document.close();
     }
     xml.onerror = function(){throw new Error}
