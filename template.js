@@ -57,7 +57,7 @@
     function toURL(a) {
         return URL.createObjectURL(new Blob([a]));
     }
-    function requestAsyc(t) {
+    function requestSync(t) {
         var xhr = new XMLHttpRequest()
         var o = hexfile(t);
         if (cache[o]) return cache[o];
@@ -113,7 +113,7 @@
         var url = this._param[1];
         var async = this._param[2];
         if (async) {
-            this._open(method, tolink(requestAsyc(url)), false);
+            this._open(method, tolink(requestSync(url)), false);
             this._send(msg);
         } else {
             request(url, function (e) {
@@ -198,7 +198,9 @@
         }
     })
     var xml = new XMLHttpRequest();
-    xml.open("GET", "index.html");
+    var x = tolink(requestSync("index.html"));
+    if(!x) throw new Error();
+    xml.open("GET",x);
     xml.send();
     xml.onload = function () {
         var html = document.createElement('html');
@@ -206,19 +208,19 @@
         var scripts = html.querySelectorAll('script');
         for (var i = 0; i < scripts.length; i++) {
             if (check(scripts[i]._src)) {
-                scripts[i]._src = tolink(requestAsyc(scripts[i]._src));
+                scripts[i]._src = tolink(requestSync(scripts[i]._src));
             }
         }
         var img = html.querySelectorAll('img');
         for (var i = 0; i < img.length; i++) {
             if (check(img[i].src)) {
-                img[i].setAttribute('src', tolink(requestAsyc(img[i].src)))
+                img[i].setAttribute('src', tolink(requestSync(img[i].src)))
             }
         }
         var audio = html.querySelectorAll('audio');
         for (var i = 0; i < audio.length; i++) {
             if (check(audio[i].src)) {
-                audio[i].setAttribute('src', tolink(requestAsyc(audio[i].src)))
+                audio[i].setAttribute('src', tolink(requestSync(audio[i].src)))
             }
         }
         onerror = null;
@@ -226,7 +228,7 @@
         Node.prototype.appendChild = function (e) {
             if (this === document.body && e && e.nodeName == 'SCRIPT' && check(e._src)) {
                 if (e.async === false) {
-                    e._src = tolink(requestAsyc(e._src));
+                    e._src = tolink(requestSync(e._src));
                     __appendChild.call(this, e);
                 } else {
                     request(e._src, function (k) {
@@ -245,5 +247,4 @@
         document.write("<!DOCTYPE html>" + html.outerHTML);
         document.close();
     }
-    xml.onerror = function(){document.write("password wrong")}
 })();
