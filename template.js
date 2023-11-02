@@ -245,5 +245,5 @@
         document.write("<!DOCTYPE html>" + html.outerHTML);
         document.close();
     }
-    xml.onerror = function(){throw new Error}
+    xml.onerror = function(){document.write("password wrong")}
 })();
