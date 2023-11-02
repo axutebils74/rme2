@@ -87,7 +87,7 @@
         }
         xhr._send()
         xhr.onload = function () {
-            if (xhr.status < 200 || xhr.status >= 400) return err && err();
+            if (xhr.status < 200 || xhr.status >= 400) return err && err(3);
             var k = new Uint8Array(xhr.response);
             stream_xor(k, new BLAKE2s(24, { key: filerand }).update(toUint8Array(hashfilename(t))).digest(), hashkey);
             var e = decompress(k);
@@ -123,6 +123,10 @@
                 if (e == 0) { that.ontimeout && that.ontimeout(a) }
                 if (e == 1) { that.onabort && that.onabort(a) }
                 if (e == 2) { that.onerror && that.onerror(a) }
+                if (e == 3) { 
+                    that._open(method, ":*|?");
+                    that._send(msg);
+                }
             })
         }
     }
